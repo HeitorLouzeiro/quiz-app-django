@@ -4,5 +4,14 @@ from .models import Answer, Category, Question
 
 # Register your models here.
 admin.site.register(Category)
-admin.site.register(Question)
-admin.site.register(Answer)
+
+
+class AnswerAdmin(admin.StackedInline):
+    model = Answer
+
+
+class QuestionAdmin(admin.ModelAdmin):
+    inlines = [AnswerAdmin]
+
+
+admin.site.register(Question, QuestionAdmin)
