@@ -1,35 +1,69 @@
 import random
 
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 
 from .models import Answer, Category, Question
 
 
 # Create your views here.
 def home(request):
-    return HttpResponse('Hello, Quiz App Django!')
+    template_name = 'quiz/pages/home.html'
+    categories = Category.objects.all()
+
+    if request.GET.get('category'):
+        return redirect(f'/quiz/?category={request.GET.get("category")}')
+
+    context = {
+        'categories': categories,
+    }
+
+    return render(request, template_name, context)
+
+
+def quiz(request):
+    return render(request, 'quiz/pages/quiz.html')
 
 
 def get_quiz(request):
     try:
-        questions = list(Question.objects.all())
-        data = []
-        random.shuffle((questions))
+        questions = Question.objects.all()
 
-        for question in questions:
+        # Filtering questions by category if 'category' parameter is provided in the request
+        # (Filtrando perguntas por categoria se o parâmetro 'category' for fornecido na solicitação)
+        if request.GET.get('category'):
+            category_name = request.GET.get('category')
+            questions = questions.filter(
+                category__name__icontains=category_name
+            )
+
+        # Converting queryset to list
+        question_list = list(questions)
+
+        # Shuffling the question list
+        random.shuffle(question_list)
+
+        data = []
+
+        # Creating a dictionary for each question and its details
+        # (Criando um dicionário para cada pergunta e seus detalhes)
+        for question in question_list:
             data.append({
                 'question': question.question,
                 'marks': question.marks,
                 'category': question.category.name,
                 'answers': question.get_answers(),
             })
+
+        # returning JSON response
+        # (retornando a resposta JSON)
         payload = {
             'status': True,
             'data': data,
         }
 
         return JsonResponse(payload)
+
     except Exception as e:
         print(e)
-        return HttpResponse('Sommething went wrong!')
+        return HttpResponse('Something went wrong!')

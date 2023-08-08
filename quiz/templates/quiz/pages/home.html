@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Django Quiz App</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="conteiner mt-5 pt-5">
+        <div class="col-md-6 mx-auto">
+            <form action="">
+                <div class="form-group">
+                    <select name="category" class="form-control">
+                        <label> Select Category</label>
+                        <option value="Choose">Choose</option>
+                        {% for category in categories %}
+                        <option value="{{category.name}}">{{category.name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button class="btn btn-danger mt-3">Submit</button>
+            </form>
+        </div>
+
+    </div>
+</body>
+
+</html>
