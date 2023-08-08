@@ -22,7 +22,11 @@ def home(request):
 
 
 def quiz(request):
-    return render(request, 'quiz/pages/quiz.html')
+    category = request.GET.get('category')
+    context = {
+        'category': category,
+    }
+    return render(request, 'quiz/pages/quiz.html', context)
 
 
 def get_quiz(request):
@@ -49,6 +53,7 @@ def get_quiz(request):
         # (Criando um dicionário para cada pergunta e seus detalhes)
         for question in question_list:
             data.append({
+                'uuid': question.uuid,
                 'question': question.question,
                 'marks': question.marks,
                 'category': question.category.name,
